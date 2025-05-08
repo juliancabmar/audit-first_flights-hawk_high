@@ -10,5 +10,7 @@ out/
 # Docs
 docs/
 
+# Utils
+
 # Dotenv file
 .env
