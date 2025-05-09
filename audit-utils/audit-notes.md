@@ -1,25 +1,12 @@
-# Process dynamic
-## Recons:
-1. Docs
-    - UUPSUpgradeable library from OpenZeppelin
-    - At the end of the school session (4 weeks), the system is upgraded to a new one.
-    
-2. Inherits
-    - UUPSUpgradeable
-3. Code
-
------------------------------------------------------------
 # Title: Hawk High
 
-# Audit Scope
+## Protocol About
+Welcome to **Hawk High**, enroll, avoid bad reviews, and graduate!!!
+You have been contracted to review the upgradeable contracts for the Hawk High School which will be launched very soon.
+These contracts utilize the UUPSUpgradeable library from OpenZeppelin.
+At the end of the school session (4 weeks), the system is upgraded to a new one.
 
-```
-├── src
-│   ├── LevelOne.sol
-│   └── LevelTwo.sol
-```
-
-# Roles:
+## Roles:
 - `Principal`:
     * hiring/firing teachers
     * start new the school session
@@ -35,35 +22,74 @@
     * get a review each week
     * If they fail to meet the cutoff score at the end of a school session, they will be not graduated to the next level when the `Principal` upgrades the system.
 
-# Invariants:
+
+## Audit Scope
+
+```
+├── src
+│   ├── LevelOne.sol
+│   └── LevelTwo.sol
+```
+## Project Stats
+
+ Checked | Code | Files\
+    -    | 40   | [LevelTwo.sol](../src/LevelTwo.sol)\
+    -    | 203  | [LevelOne.sol](../src/LevelOne.sol)
+
+
+## Compatibilities
+- Solc versions:
+    - 0.8.26
+- Chains for production:
+    - EVM Compatible
+- Tokens:
+    - USDC
+
+## Known Issues
+
+
+
+--------------------------------------------------------------------
+
+# Lists
+
+## Restrictions:
+```
+├── src
+│   ├── LevelOne.sol
+│   └── LevelTwo.sol
+```
+## Unknows:
++ ERC-1822 
++ EIP-1967
++ USDC
+## Not Testeables Invariants:
+## Testebles Invariants:
 - A school session lasts 4 weeks
-- For the sake of this project, assume USDC has 18 decimals
+- USDC has 18 decimals
 - Wages are to be paid only when the `graduateAndUpgrade()` function is called by the `principal`
 - Payment structure is as follows:
   - `principal` gets 5% of `bursary`
   - `teachers` share of 35% of `bursary`
   - remaining 60% should reflect in the bursary after upgrade
 - Students can only be reviewed once per week
-- Students must have gotten all reviews before system upgrade. System upgrade should not occur if any student has not gotten 4 reviews (one for each week)
+- Students must have gotten all reviews before system upgrade.
+- System upgrade should not occur if any student has not gotten 4 reviews (one for each week)
 - Any student who doesn't meet the `cutOffScore` should not be upgraded
 - System upgrade cannot take place unless school's `sessionEnd` has reached
 
-# Unknow EIP/ERC/Tokens/Protocols
-+ ERC-1822 
-+ EIP-1967
-+ USDC
+----------------------------------------------------------------------
 
-# Compatibilities
-- Solc version:
-- Chains:
-    - EVM Compatible
-- Tokens:
-    - USDC
+# Audit Process
 
-# Known Issues
-
-# Stats
-
- Checked | Code | Files
-    -    | 40   | [](../src/LevelTwo.sol)
-    -    | 203  | [](../src/LevelOne.sol)
+### 1. (+) Onboarding
+### 2. (+) Research unknows
+### 3. (+) Search restrictions
+### 4. (+) Automated analisis
+### 5. (+) Increase Kwnoledge
+### 6. (+) Search the invariants
+### 6. (-) Manual analisis
+### 7. (-) Fuzzing
+### 8. (-) Answering
+### 9. (-) Analisis-Answer loop
+### 10. (-) Reporting

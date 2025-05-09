@@ -7,8 +7,10 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
 contract LevelTwo is Initializable {
     using SafeERC20 for IERC20;
+    // @? - is never initialized
 
     address principal;
+    // @? - is never used
     bool inSession;
     uint256 public sessionEnd;
     uint256 public bursary;
@@ -16,6 +18,7 @@ contract LevelTwo is Initializable {
     mapping(address => bool) public isTeacher;
     mapping(address => bool) public isStudent;
     mapping(address => uint256) public studentScore;
+    // @? - is never initialized
     address[] listOfStudents;
     address[] listOfTeachers;
 
@@ -23,8 +26,10 @@ contract LevelTwo is Initializable {
     uint256 public constant PRINCIPAL_WAGE_L2 = 5;
     uint256 public constant PRECISION = 100;
 
+    // @? - is never initialized
     IERC20 usdc;
 
+    // @? - A - is never used internally - make external
     function graduate() public reinitializer(2) {}
 
     function getPrincipal() external view returns (address) {

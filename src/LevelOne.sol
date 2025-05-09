@@ -45,6 +45,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     mapping(address => bool) public isTeacher;
     mapping(address => bool) public isStudent;
     mapping(address => uint256) public studentScore;
+    // @? - A - is never initialized
     mapping(address => uint256) private reviewCount;
     mapping(address => uint256) private lastReviewTime;
     address[] listOfStudents;
@@ -83,6 +84,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     error HH__StudentDoesNotExist();
     error HH__AlreadyInSession();
     error HH__ZeroValue();
+    // @? - A - is never used
     error HH__HawkHighFeesNotPaid();
     error HH__NotAllowed();
 
@@ -97,6 +99,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         }
         _;
     }
+    // @? - A - used only once - include in function
 
     modifier onlyTeacher() {
         if (!isTeacher[msg.sender]) {
@@ -117,6 +120,8 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////     INITIALIZER      /////
     /////                      /////
     ////////////////////////////////
+    // @? - A - everyone can initialize
+    // @? - A - is never used internally - make external
     function initialize(address _principal, uint256 _schoolFees, address _usdcAddress) public initializer {
         if (_principal == address(0)) {
             revert HH__ZeroAddress();
@@ -127,8 +132,9 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (_usdcAddress == address(0)) {
             revert HH__ZeroAddress();
         }
-
+        // @? - A - state changes without event emit
         principal = _principal;
+        // @? - A - state changes without event emit
         schoolFees = _schoolFees;
         usdc = IERC20(_usdcAddress);
 
@@ -198,6 +204,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////   PUBLIC FUNCTIONS   /////
     /////                      /////
     ////////////////////////////////
+    // @? - A - is never used internally - make external
     function addTeacher(address _teacher) public onlyPrincipal notYetInSession {
         if (_teacher == address(0)) {
             revert HH__ZeroAddress();
@@ -217,6 +224,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit TeacherAdded(_teacher);
     }
 
+    // @? - A - is never used internally - make external
     function removeTeacher(address _teacher) public onlyPrincipal {
         if (_teacher == address(0)) {
             revert HH__ZeroAddress();
@@ -225,7 +233,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (!isTeacher[_teacher]) {
             revert HH__TeacherDoesNotExist();
         }
-
+        // @? - A - gas inifecient loop - use local memory var instead
         uint256 teacherLength = listOfTeachers.length;
         for (uint256 n = 0; n < teacherLength; n++) {
             if (listOfTeachers[n] == _teacher) {
@@ -240,8 +248,10 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit TeacherRemoved(_teacher);
     }
 
+    // @? - A - is never used internally - make external
     function expel(address _student) public onlyPrincipal {
         if (inSession == false) {
+            // @? - A - revert without error
             revert();
         }
         if (_student == address(0)) {
@@ -251,7 +261,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (!isStudent[_student]) {
             revert HH__StudentDoesNotExist();
         }
-
+        // @? - A - gas inifecient loop - use local memory var instead
         uint256 studentLength = listOfStudents.length;
         for (uint256 n = 0; n < studentLength; n++) {
             if (listOfStudents[n] == _student) {
@@ -265,6 +275,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
 
         emit Expelled(_student);
     }
+    // @? - A - is never used internally - make external
 
     function startSession(uint256 _cutOffScore) public onlyPrincipal notYetInSession {
         sessionEnd = block.timestamp + 4 weeks;
@@ -274,11 +285,13 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit SchoolInSession(block.timestamp, sessionEnd);
     }
 
+    // @? - A - is never used internally - make external
     function giveReview(address _student, bool review) public onlyTeacher {
         if (!isStudent[_student]) {
             revert HH__StudentDoesNotExist();
         }
         require(reviewCount[_student] < 5, "Student review count exceeded!!!");
+        // @? - A - uses timestamp for comparisions
         require(block.timestamp >= lastReviewTime[_student] + reviewTime, "Reviews can only be given once per week");
 
         // where `false` is a bad review and true is a good review
@@ -292,6 +305,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit ReviewGiven(_student, review, studentScore[_student]);
     }
 
+    // @? - A - is never used internally - make external
     function graduateAndUpgrade(address _levelTwo, bytes memory) public onlyPrincipal {
         if (_levelTwo == address(0)) {
             revert HH__ZeroAddress();
