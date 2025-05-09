@@ -1,0 +1,1 @@
+Is not descentralized. The Owner (Circle) have all control of the mint and burn.
