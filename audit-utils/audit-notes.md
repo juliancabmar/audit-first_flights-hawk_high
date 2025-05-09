@@ -12,7 +12,6 @@ At the end of the school session (4 weeks), the system is upgraded to a new one.
     * start new the school session
     * upgrading the system at the end of the school session
     * expel students who break rules
-    <!-- @? - every what time period (4 weeks?) the wages are deposit to principal and teachers? -->
     * get 5% of the school fees
 - `Teachers`:
     * giving reviews to students at the end of each week

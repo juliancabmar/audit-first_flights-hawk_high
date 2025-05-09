@@ -35,9 +35,13 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////      VARIABLES       /////
     /////                      /////
     ////////////////////////////////
+    // @? - initialized once, immutable
     address principal;
+    // @? - initialized once, immutable
     bool inSession;
+    // @? - initialized once, immutable
     uint256 schoolFees;
+    // @? - This not to be constant
     uint256 public immutable reviewTime = 1 weeks;
     uint256 public sessionEnd;
     uint256 public bursary;
@@ -55,6 +59,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     uint256 public constant PRINCIPAL_WAGE = 5; // 5%
     uint256 public constant PRECISION = 100;
 
+    // @? - initialized once, immutable
     IERC20 usdc;
 
     ////////////////////////////////
@@ -68,6 +73,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     event Expelled(address indexed);
     event SchoolInSession(uint256 indexed startTime, uint256 indexed endTime);
     event ReviewGiven(address indexed student, bool indexed review, uint256 indexed studentScore);
+    // @? - not used
     event Graduated(address indexed levelTwo);
 
     ////////////////////////////////
@@ -120,8 +126,10 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////     INITIALIZER      /////
     /////                      /////
     ////////////////////////////////
+    // @? - Why an initializer and not a regular constructor
     // @? - A - everyone can initialize
     // @? - A - is never used internally - make external
+    // @? - school fee not to be minimun 100/PRINCIPAL_WAGE for avoid truncate on graduateAndUpgrade()
     function initialize(address _principal, uint256 _schoolFees, address _usdcAddress) public initializer {
         if (_principal == address(0)) {
             revert HH__ZeroAddress();
@@ -157,6 +165,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
 
         listOfStudents.push(msg.sender);
         isStudent[msg.sender] = true;
+        // @? - magic number
         studentScore[msg.sender] = 100;
         bursary += schoolFees;
 
@@ -276,6 +285,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit Expelled(_student);
     }
     // @? - A - is never used internally - make external
+    //
 
     function startSession(uint256 _cutOffScore) public onlyPrincipal notYetInSession {
         sessionEnd = block.timestamp + 4 weeks;
@@ -296,6 +306,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
 
         // where `false` is a bad review and true is a good review
         if (!review) {
+            // @? - underflow
             studentScore[_student] -= 10;
         }
 
@@ -312,7 +323,6 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         }
 
         uint256 totalTeachers = listOfTeachers.length;
-
         uint256 payPerTeacher = (bursary * TEACHER_WAGE) / PRECISION;
         uint256 principalPay = (bursary * PRINCIPAL_WAGE) / PRECISION;
 

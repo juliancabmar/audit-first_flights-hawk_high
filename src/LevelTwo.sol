@@ -19,9 +19,11 @@ contract LevelTwo is Initializable {
     mapping(address => bool) public isStudent;
     mapping(address => uint256) public studentScore;
     // @? - is never initialized
+    // @? - why an arrays and not a mapping
     address[] listOfStudents;
     address[] listOfTeachers;
-
+    // @? - A - This variables are here only for mantain the state storage on the proxy contract safe
+    // @? - The teachers wage not will be 35%
     uint256 public constant TEACHER_WAGE_L2 = 40;
     uint256 public constant PRINCIPAL_WAGE_L2 = 5;
     uint256 public constant PRECISION = 100;
@@ -30,6 +32,8 @@ contract LevelTwo is Initializable {
     IERC20 usdc;
 
     // @? - A - is never used internally - make external
+    // @? - if this the function that inicialize the new implementation
+    // @? - Is alLright that the version to be a literal, don't be unupgradable on the future
     function graduate() public reinitializer(2) {}
 
     function getPrincipal() external view returns (address) {
