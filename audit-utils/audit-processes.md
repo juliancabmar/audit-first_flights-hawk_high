@@ -40,8 +40,11 @@
         memorice it       
 
 ## Search the invariants
-    add to LIST::Not Testeables Invariants
-    add to LIST::Testebles Invariants
+    Search in the docs for invariants
+    if are not testeable:
+        add to add to LIST::Not Testeables Invariants
+    else:
+        add to LIST::Not Confirmed Invariants
 
 ## Manual analisis
     For every contract/library/interface in file do:
@@ -60,14 +63,18 @@
             for exploits/bugs/inconsistencies on
                 state variables
                 constructor
+                modifiers
                 public functions
                 external functions
                 fallback function
                 receive function
 
-## Fuzzing
+## Invariants confirmation
+    if are confirmed add to LIST::Confirmed Invariants   
+
+## Test invatiants
     Make a test for all on:
-        LIST::Testeables Invariants
+        LIST::Not Confirmed Invariants
 
 ## Answering
     for every question on the code:

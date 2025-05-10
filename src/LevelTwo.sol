@@ -34,6 +34,7 @@ contract LevelTwo is Initializable {
     // @? - A - is never used internally - make external
     // @? - if this the function that inicialize the new implementation
     // @? - Is alLright that the version to be a literal, don't be unupgradable on the future
+    // @? - the version number must be respect a secuence, and if yes, it does.
     function graduate() public reinitializer(2) {}
 
     function getPrincipal() external view returns (address) {

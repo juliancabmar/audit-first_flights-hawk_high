@@ -35,6 +35,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////      VARIABLES       /////
     /////                      /////
     ////////////////////////////////
+    // @? - storage override (see auxiliary notes)
     // @? - initialized once, immutable
     address principal;
     // @? - initialized once, immutable
@@ -214,6 +215,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////                      /////
     ////////////////////////////////
     // @? - A - is never used internally - make external
+    // @? - the principal can be teacher too
     function addTeacher(address _teacher) public onlyPrincipal notYetInSession {
         if (_teacher == address(0)) {
             revert HH__ZeroAddress();
@@ -242,7 +244,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (!isTeacher[_teacher]) {
             revert HH__TeacherDoesNotExist();
         }
-        // @? - A - gas inifecient loop - use local memory var instead
+        // @? - A - gas inifecient loop - use local memory var [] instead
         uint256 teacherLength = listOfTeachers.length;
         for (uint256 n = 0; n < teacherLength; n++) {
             if (listOfTeachers[n] == _teacher) {
@@ -270,7 +272,8 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (!isStudent[_student]) {
             revert HH__StudentDoesNotExist();
         }
-        // @? - A - gas inifecient loop - use local memory var instead
+        // @? - A - gas inifecient loop - use local memory var [] instead
+        // @? - students can be infinite by public enroll() (DoS)
         uint256 studentLength = listOfStudents.length;
         for (uint256 n = 0; n < studentLength; n++) {
             if (listOfStudents[n] == _student) {
@@ -285,7 +288,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit Expelled(_student);
     }
     // @? - A - is never used internally - make external
-    //
+    // @? - the cutOffScore can be upper than 100 (enroll score)
 
     function startSession(uint256 _cutOffScore) public onlyPrincipal notYetInSession {
         sessionEnd = block.timestamp + 4 weeks;
@@ -296,12 +299,14 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     }
 
     // @? - A - is never used internally - make external
+    // @? - not zero address check
     function giveReview(address _student, bool review) public onlyTeacher {
         if (!isStudent[_student]) {
             revert HH__StudentDoesNotExist();
         }
         require(reviewCount[_student] < 5, "Student review count exceeded!!!");
-        // @? - A - uses timestamp for comparisions
+        // @? - A - uses timestamp for comparisions (MEV)
+        // @? - reviews will shouldn't be make on the end of the week exactly
         require(block.timestamp >= lastReviewTime[_student] + reviewTime, "Reviews can only be given once per week");
 
         // where `false` is a bad review and true is a good review
@@ -317,6 +322,9 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     }
 
     // @? - A - is never used internally - make external
+    // @? - not check if session end
+    // @? - not checks if any student has not gotten 4 reviews
+    // @? - not chaeck if any student score not meet the cutOffScore
     function graduateAndUpgrade(address _levelTwo, bytes memory) public onlyPrincipal {
         if (_levelTwo == address(0)) {
             revert HH__ZeroAddress();
