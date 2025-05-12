@@ -18,7 +18,8 @@ contract AuditTests is Test {
         // Call the initializer function on new implementation
         address(proxy).call(abi.encodeCall(implementOne.initialize, (666)));
         // Call WAGE_L1 constant
-        (, bytes memory wageL1) = address(proxy).call(abi.encodeCall(implementOne.WAGE_L1, ()));
-        console2.log("WAGE_L1:", abi.decode(wageL1, (uint256)));
+        // (, bytes memory wageL1) = address(proxy).call(abi.encodeCall(implementOne.WAGE_L1, ()));
+        // console2.log("WAGE_L1:", abi.decode(wageL1, (uint256)));
+        console2.log("WAGE_L1:", MyContractV1(address(proxy)).WAGE_L1());
     }
 }
