@@ -24,6 +24,10 @@ contract MyContractV1 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     function setValue(uint256 _value) public onlyOwner {
         value = _value;
     }
+
+    function getWageL1() public view returns (uint256) {
+        return WAGE_L1;
+    }
 }
 
 // Implementation V2

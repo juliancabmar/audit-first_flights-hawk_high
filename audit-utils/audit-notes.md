@@ -75,12 +75,12 @@ Scope
 
 ## Not Confirmed Invariants
 + A school session lasts 4 weeks
-- `teachers` share of 35% of `bursary`
-- remaining 60% should reflect in the bursary after upgrade
-- Students must have gotten all reviews before system upgrade.
-- System upgrade should not occur if any student has not gotten 4 reviews (one for each week)
-- Any student who doesn't meet the `cutOffScore` should not be upgraded
-- System upgrade cannot take place unless school's `sessionEnd` has reached
++ `teachers` share of 35% of `bursary`
++ remaining 60% should reflect in the bursary after upgrade
++ Students must have gotten all reviews before system upgrade.
++ System upgrade should not occur if any student has not gotten 4 reviews (one for each week)
++ Any student who doesn't meet the `cutOffScore` should not be upgraded
++ System upgrade cannot take place unless school's `sessionEnd` has reached
 
 
 ----------------------------------------------------------------------
@@ -95,7 +95,7 @@ Scope
 ###  6. (+) Search the invariants
 ###  7. (+) Manual analisis
 ###  8. (+) Invariants confirmation
-###  9. (-) Test invatiants
+###  9. (+) Test invatiants
 ### 10. (-) Answering
 ### 11. (-) Analisis-Answer loop
 ### 12. (-) Reporting

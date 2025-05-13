@@ -7,10 +7,8 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
 contract LevelTwo is Initializable {
     using SafeERC20 for IERC20;
-    // @? - is never initialized
 
     address principal;
-    // @? - is never used
     bool inSession;
     uint256 public sessionEnd;
     uint256 public bursary;
@@ -18,23 +16,16 @@ contract LevelTwo is Initializable {
     mapping(address => bool) public isTeacher;
     mapping(address => bool) public isStudent;
     mapping(address => uint256) public studentScore;
-    // @? - is never initialized
-    // @? - why an arrays and not a mapping
     address[] listOfStudents;
     address[] listOfTeachers;
-    // @? - A - This variables are here only for mantain the state storage on the proxy contract safe
-    // @? - The teachers wage not will be 35%
+    // @audit-high - The teachers wage not will be 35%
     uint256 public constant TEACHER_WAGE_L2 = 40;
     uint256 public constant PRINCIPAL_WAGE_L2 = 5;
     uint256 public constant PRECISION = 100;
 
-    // @? - is never initialized
     IERC20 usdc;
 
-    // @? - A - is never used internally - make external
-    // @? - if this the function that inicialize the new implementation
-    // @? - Is alLright that the version to be a literal, don't be unupgradable on the future
-    // @? - the version number must be respect a secuence, and if yes, it does.
+    // @audit-info - is never used internally - make external
     function graduate() public reinitializer(2) {}
 
     function getPrincipal() external view returns (address) {

@@ -36,13 +36,13 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////                      /////
     ////////////////////////////////
     // @? - storage override (see auxiliary notes)
-    // @? - initialized once, immutable
+    // @audit-gas - initialized once, immutable
     address principal;
-    // @? - initialized once, immutable
+    // @audit-gas - initialized once, immutable
     bool inSession;
-    // @? - initialized once, immutable
+    // @audit-gas - initialized once, immutable
     uint256 schoolFees;
-    // @? - This not to be constant
+    // @audit-gas - must to be constant
     uint256 public immutable reviewTime = 1 weeks;
     uint256 public sessionEnd;
     uint256 public bursary;
@@ -50,7 +50,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     mapping(address => bool) public isTeacher;
     mapping(address => bool) public isStudent;
     mapping(address => uint256) public studentScore;
-    // @? - A - is never initialized
+    // @audit-info - A - is never initialized
     mapping(address => uint256) private reviewCount;
     mapping(address => uint256) private lastReviewTime;
     address[] listOfStudents;
@@ -60,7 +60,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     uint256 public constant PRINCIPAL_WAGE = 5; // 5%
     uint256 public constant PRECISION = 100;
 
-    // @? - initialized once, immutable
+    // @audit-gas - initialized once, make immutable
     IERC20 usdc;
 
     ////////////////////////////////
@@ -74,7 +74,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     event Expelled(address indexed);
     event SchoolInSession(uint256 indexed startTime, uint256 indexed endTime);
     event ReviewGiven(address indexed student, bool indexed review, uint256 indexed studentScore);
-    // @? - not used
+    // @audit-info - not used, remove
     event Graduated(address indexed levelTwo);
 
     ////////////////////////////////
@@ -91,7 +91,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     error HH__StudentDoesNotExist();
     error HH__AlreadyInSession();
     error HH__ZeroValue();
-    // @? - A - is never used
+    // @audit-info - is never used, remove
     error HH__HawkHighFeesNotPaid();
     error HH__NotAllowed();
 
@@ -106,7 +106,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         }
         _;
     }
-    // @? - A - used only once - include in function
+    // @audit-info - used only once - include in function
 
     modifier onlyTeacher() {
         if (!isTeacher[msg.sender]) {
@@ -127,10 +127,6 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////     INITIALIZER      /////
     /////                      /////
     ////////////////////////////////
-    // @? - Why an initializer and not a regular constructor
-    // @? - A - everyone can initialize
-    // @? - A - is never used internally - make external
-    // @? - school fee not to be minimun 100/PRINCIPAL_WAGE for avoid truncate on graduateAndUpgrade()
     function initialize(address _principal, uint256 _schoolFees, address _usdcAddress) public initializer {
         if (_principal == address(0)) {
             revert HH__ZeroAddress();
@@ -141,9 +137,9 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (_usdcAddress == address(0)) {
             revert HH__ZeroAddress();
         }
-        // @? - A - state changes without event emit
+        // @audit-info - state changes without event emit
         principal = _principal;
-        // @? - A - state changes without event emit
+        // @audit-info - state changes without event emit
         schoolFees = _schoolFees;
         usdc = IERC20(_usdcAddress);
 
@@ -166,7 +162,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
 
         listOfStudents.push(msg.sender);
         isStudent[msg.sender] = true;
-        // @? - magic number
+        // @audit-info - magic number
         studentScore[msg.sender] = 100;
         bursary += schoolFees;
 
@@ -214,8 +210,8 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////   PUBLIC FUNCTIONS   /////
     /////                      /////
     ////////////////////////////////
-    // @? - A - is never used internally - make external
-    // @? - the principal can be teacher too
+    // @audit-info - is never used internally - make external
+    // @audit-low - the principal can be teacher too
     function addTeacher(address _teacher) public onlyPrincipal notYetInSession {
         if (_teacher == address(0)) {
             revert HH__ZeroAddress();
@@ -235,7 +231,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit TeacherAdded(_teacher);
     }
 
-    // @? - A - is never used internally - make external
+    // @audit-info - is never used internally - make external
     function removeTeacher(address _teacher) public onlyPrincipal {
         if (_teacher == address(0)) {
             revert HH__ZeroAddress();
@@ -244,7 +240,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (!isTeacher[_teacher]) {
             revert HH__TeacherDoesNotExist();
         }
-        // @? - A - gas inifecient loop - use local memory var [] instead
+        // @audit-gas - gas inifecient loop - use local memory var [] instead
         uint256 teacherLength = listOfTeachers.length;
         for (uint256 n = 0; n < teacherLength; n++) {
             if (listOfTeachers[n] == _teacher) {
@@ -259,10 +255,10 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit TeacherRemoved(_teacher);
     }
 
-    // @? - A - is never used internally - make external
+    // @audit-info - is never used internally - make external
     function expel(address _student) public onlyPrincipal {
         if (inSession == false) {
-            // @? - A - revert without error
+            // @audit-info - revert without error menssage
             revert();
         }
         if (_student == address(0)) {
@@ -272,8 +268,8 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (!isStudent[_student]) {
             revert HH__StudentDoesNotExist();
         }
-        // @? - A - gas inifecient loop - use local memory var [] instead
-        // @? - students can be infinite by public enroll() (DoS)
+        // @audit-gas - gas inifecient loop - use local memory var [] instead
+        // @audit-high - students can be infinite by public enroll() - (DoS)
         uint256 studentLength = listOfStudents.length;
         for (uint256 n = 0; n < studentLength; n++) {
             if (listOfStudents[n] == _student) {
@@ -287,8 +283,8 @@ contract LevelOne is Initializable, UUPSUpgradeable {
 
         emit Expelled(_student);
     }
-    // @? - A - is never used internally - make external
-    // @? - the cutOffScore can be upper than 100 (enroll score)
+    // @audit-info - is never used internally - make external
+    // @audit-medium - the cutOffScore can be upper than 100 (enroll score)
 
     function startSession(uint256 _cutOffScore) public onlyPrincipal notYetInSession {
         sessionEnd = block.timestamp + 4 weeks;
@@ -298,20 +294,20 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit SchoolInSession(block.timestamp, sessionEnd);
     }
 
-    // @? - A - is never used internally - make external
-    // @? - not zero address check
+    // @audit-info - is never used internally - make external
+    // @audit-info - not zero address check
+    // @audit-low - dont check if are in session for review
     function giveReview(address _student, bool review) public onlyTeacher {
         if (!isStudent[_student]) {
             revert HH__StudentDoesNotExist();
         }
         require(reviewCount[_student] < 5, "Student review count exceeded!!!");
-        // @? - A - uses timestamp for comparisions (MEV)
-        // @? - reviews will shouldn't be make on the end of the week exactly
+        // @audit-medium - uses timestamp for comparisions (MEV)
+        // @audit-info - reviews will shouldn't be make on the end of the week exactly
         require(block.timestamp >= lastReviewTime[_student] + reviewTime, "Reviews can only be given once per week");
 
         // where `false` is a bad review and true is a good review
         if (!review) {
-            // @? - underflow
             studentScore[_student] -= 10;
         }
 
@@ -321,10 +317,11 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit ReviewGiven(_student, review, studentScore[_student]);
     }
 
-    // @? - A - is never used internally - make external
-    // @? - not check if session end
-    // @? - not checks if any student has not gotten 4 reviews
-    // @? - not chaeck if any student score not meet the cutOffScore
+    // @audit-info - is never used internally - make external
+    // @audit-high - not check if session end
+    // @audit-high - not checks if any student has not gotten 4 reviews
+    // @audit-high - not check if any student score not meet the cutOffScore
+    // @audit-high - Can't add more of two teachers
     function graduateAndUpgrade(address _levelTwo, bytes memory) public onlyPrincipal {
         if (_levelTwo == address(0)) {
             revert HH__ZeroAddress();

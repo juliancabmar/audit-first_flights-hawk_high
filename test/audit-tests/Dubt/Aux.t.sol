@@ -10,16 +10,19 @@ contract AuditTests is Test {
     MyContractV1 implementOne;
     MyContractV2 implementTwo;
 
-    function testAux() public {
+    function setUp() public {
         // Deploy One
         implementOne = new MyContractV1();
         // Deploy proxy and pass One address how first implementation
         proxy = new ERC1967Proxy(address(implementOne), "");
         // Call the initializer function on new implementation
+    }
+
+    function testAux() public {
         address(proxy).call(abi.encodeCall(implementOne.initialize, (666)));
         // Call WAGE_L1 constant
         // (, bytes memory wageL1) = address(proxy).call(abi.encodeCall(implementOne.WAGE_L1, ()));
         // console2.log("WAGE_L1:", abi.decode(wageL1, (uint256)));
-        console2.log("WAGE_L1:", MyContractV1(address(proxy)).WAGE_L1());
+        console2.log("WAGE_L1:", MyContractV1(address(proxy)).getWageL1());
     }
 }
