@@ -269,7 +269,6 @@ contract LevelOne is Initializable, UUPSUpgradeable {
             revert HH__StudentDoesNotExist();
         }
         // @audit-gas - gas inifecient loop - use local memory var [] instead
-        // @audit-high - students can be infinite by public enroll() - (DoS)
         uint256 studentLength = listOfStudents.length;
         for (uint256 n = 0; n < studentLength; n++) {
             if (listOfStudents[n] == _student) {

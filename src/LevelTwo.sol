@@ -18,7 +18,6 @@ contract LevelTwo is Initializable {
     mapping(address => uint256) public studentScore;
     address[] listOfStudents;
     address[] listOfTeachers;
-    // @audit-high - The teachers wage not will be 35%
     uint256 public constant TEACHER_WAGE_L2 = 40;
     uint256 public constant PRINCIPAL_WAGE_L2 = 5;
     uint256 public constant PRECISION = 100;
