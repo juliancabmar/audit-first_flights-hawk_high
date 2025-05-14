@@ -106,3 +106,4 @@ Scope
 # Auxiliary Notes
 
 - For overrided storage see "./audit-notes.ods"
+

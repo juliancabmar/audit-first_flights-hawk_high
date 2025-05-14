@@ -240,7 +240,6 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (!isTeacher[_teacher]) {
             revert HH__TeacherDoesNotExist();
         }
-        // @audit-gas - gas inifecient loop - use local memory var [] instead
         uint256 teacherLength = listOfTeachers.length;
         for (uint256 n = 0; n < teacherLength; n++) {
             if (listOfTeachers[n] == _teacher) {
@@ -268,7 +267,6 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         if (!isStudent[_student]) {
             revert HH__StudentDoesNotExist();
         }
-        // @audit-gas - gas inifecient loop - use local memory var [] instead
         uint256 studentLength = listOfStudents.length;
         for (uint256 n = 0; n < studentLength; n++) {
             if (listOfStudents[n] == _student) {
@@ -300,7 +298,6 @@ contract LevelOne is Initializable, UUPSUpgradeable {
             revert HH__StudentDoesNotExist();
         }
         require(reviewCount[_student] < 5, "Student review count exceeded!!!");
-        // @audit-medium - uses timestamp for comparisions (MEV)
         // @audit-info - reviews will shouldn't be make on the end of the week exactly
         require(block.timestamp >= lastReviewTime[_student] + reviewTime, "Reviews can only be given once per week");
 

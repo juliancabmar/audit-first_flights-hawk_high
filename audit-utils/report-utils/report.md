@@ -1,3 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .full-page {
+        width:  100%;
+        height:  100vh; /* This will make the div take up the full viewport height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .full-page img {
+        max-width:  200;
+        max-height:  200;
+        margin-bottom: 5rem;
+    }
+    .full-page div{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+</style>
+</head>
+<body>
+
+<div class="full-page">
+    <img src="../../audit-utils/report-utils/logo.jpeg" alt="Logo">
+    <div>
+    <h1>Hawk High Audit Report</h1>
+    <h3>Prepared by: Julián Cabrera Marceglia</h3>
+    </div>
+</div>
+
+</body>
+</html>
+
+<!-- Your report starts here! -->
+
+# Hawk High Audit Report
+
+### Prepared by: Julián Cabrera Marceglia
+Lead Auditors: 
+
+- Julián Cabrera Marceglia (https://github.com/juliancabmar)
+
+Assisting Auditors:
+
+- None
+
+# Table of contents
+
+- [Hawk High Audit Report](#hawk-high-audit-report)
+- [Table of contents](#table-of-contents)
+- [About Julian Cabrera Marceglia](#about-julian-cabrera-marceglia)
+- [Disclaimer](#disclaimer)
+- [Risk Classification](#risk-classification)
+- [Audit Details](#audit-details)
+  - [Scope](#scope)
+- [Protocol Summary](#protocol-summary)
+  - [Roles](#roles)
+- [Executive Summary](#executive-summary)
+  - [Issues found](#issues-found)
+- [Findings](#findings)
+  - [High](#high)
+    - [\[H-1\] Missing access control on `LevelOne::initialize` get exposed to MEV attack](#h-1-missing-access-control-on-leveloneinitialize-get-exposed-to-mev-attack)
+    - [\[H-2\] The teachers wage are changed on LevelTwo implementation modiffying the payment standard.](#h-2-the-teachers-wage-are-changed-on-leveltwo-implementation-modiffying-the-payment-standard)
+    - [\[H-3\] Teachers wage limit the number of teachers to add.](#h-3-teachers-wage-limit-the-number-of-teachers-to-add)
+  - [Medium](#medium)
+    - [\[M-1\] `LevelOne::graduateAndUpgrade` not check if session ends.](#m-1-levelonegraduateandupgrade-not-check-if-session-ends)
+    - [\[M-2\] `LevelOne::graduateAndUpgrade` not check on students reviews.](#m-2-levelonegraduateandupgrade-not-check-on-students-reviews)
+    - [\[M-3\] `LevelOne::graduateAndUpgrade` not check on students cuttoff score.](#m-3-levelonegraduateandupgrade-not-check-on-students-cuttoff-score)
+  - [Low](#low)
+    - [\[L-1\] The cutoff score can be upper than 100](#l-1-the-cutoff-score-can-be-upper-than-100)
+    - [\[G-1\] `LevelOne::removeTeacher` Ineficient loop.](#g-1-leveloneremoveteacher-ineficient-loop)
+    - [\[G-2\] `LevelOne::expel` Ineficient loop.](#g-2-leveloneexpel-ineficient-loop)
+    
+</br>
+
+# About Julian Cabrera Marceglia
+
+I am a security researcher who want to make the web3 enviroment safer.
+
+# Disclaimer
+
+The Julián Cabrera Marceglia team makes all effort to find as many vulnerabilities in the code in the given time period, but holds no responsibilities for the the findings provided in this document. A security audit by the team is not an endorsement of the underlying business or product. The audit was time-boxed and the review of the code was solely on the security aspects of the solidity implementation of the contracts.
+
+# Risk Classification
+
+|            |        | Impact |        |     |
+| ---------- | ------ | ------ | ------ | --- |
+|            |        | High   | Medium | Low |
+|            | High   | H      | H/M    | M   |
+| Likelihood | Medium | H/M    | M      | M/L |
+|            | Low    | M      | M/L    | L   |
+
+# Audit Details
+
+**The findings described in this document correspond the following:**
+```
+code base: https://github.com/juliancabmar/audit-first_flights-hawk_high
+
+commit hash: b045cb951b0238f7b731bb2fa41abfe3466d5bd0
+```
+
+## Scope 
+
+```
+├── src
+│   ├── LevelOne.sol
+│   └── LevelTwo.sol
+```
+
+# Protocol Summary
+
+You have been contracted to review the upgradeable contracts for the Hawk High School which will be launched very soon.
+These contracts utilize the UUPSUpgradeable library from OpenZeppelin.
+At the end of the school session (4 weeks), the system is upgraded to a new one.
+
+## Roles
+
+- `Principal`:
+    * hiring/firing teachers
+    * start new the school session
+    * upgrading the system at the end of the school session
+    * expel students who break rules
+    * get 5% of the school fees
+- `Teachers`:
+    * giving reviews to students at the end of each week
+    * get 35% of the school fees
+- `Student`:
+    * pay a school fee when enrolling in Hawk High School
+    * get a review each week
+    * If they fail to meet the cutoff score at the end of a school session, they will be not graduated to the next level when the `Principal` upgrades the system.
+
+# Executive Summary
+
+## Issues found
+
+| Severity | Number of issues found |
+| -------- | ---------------------- |
+| High     | 3                      |
+| Medium   | 3                      |
+| Low      | 1                      |
+| Gas      | 2                      |
+|----------|------------------------|
+| Total    | 9                      |
+
+# Findings
+
 ## High
 
 ### [H-1] Missing access control on `LevelOne::initialize` get exposed to MEV attack
