@@ -96,9 +96,9 @@ Scope
 ###  7. (+) Manual analisis
 ###  8. (+) Invariants confirmation
 ###  9. (+) Test invatiants
-### 10. (-) Answering
-### 11. (-) Analisis-Answer loop
-### 12. (-) Reporting
+### 10. (+) Answering
+### 11. (+) Analisis-Answer loop
+### 12. (+) Reporting
 
 
 ----------------------------------------------------------------------

@@ -74,8 +74,10 @@ Assisting Auditors:
     - [\[M-3\] `LevelOne::graduateAndUpgrade` not check on students cuttoff score.](#m-3-levelonegraduateandupgrade-not-check-on-students-cuttoff-score)
   - [Low](#low)
     - [\[L-1\] The cutoff score can be upper than 100](#l-1-the-cutoff-score-can-be-upper-than-100)
+  - [Gas](#gas)
     - [\[G-1\] `LevelOne::removeTeacher` Ineficient loop.](#g-1-leveloneremoveteacher-ineficient-loop)
     - [\[G-2\] `LevelOne::expel` Ineficient loop.](#g-2-leveloneexpel-ineficient-loop)
+    - [\[G-3\] Other Gas improvements.](#g-3-other-gas-improvements)
     
 </br>
 
@@ -144,9 +146,8 @@ At the end of the school session (4 weeks), the system is upgraded to a new one.
 | High     | 3                      |
 | Medium   | 3                      |
 | Low      | 1                      |
-| Gas      | 2                      |
-|----------|------------------------|
-| Total    | 9                      |
+| Gas      | 8                      |
+| Total    | 15                     |
 
 # Findings
 
@@ -677,3 +678,19 @@ function expel(address _student) public onlyPrincipal {
     emit Expelled(_student);
 }
 ```
+
+### [G-3] Other Gas improvements.
+
+**Description and Mitigation:**
+
+`LevelOne::principal`: initialized once, make it immutable.
+
+`LevelOne::inSession`: initialized once, make it immutable.
+
+`LevelOne::schoolFees`: initialized once, make it immutable.
+
+`LevelOne::usdc`: initialized once, make it immutable.
+
+`LevelOne::reviewCount`: is never initialized, remove it.
+
+`LevelOne::reviewTime`: initialized in declaration and never changed, make it constant.

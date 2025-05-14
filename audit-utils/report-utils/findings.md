@@ -525,3 +525,19 @@ function expel(address _student) public onlyPrincipal {
     emit Expelled(_student);
 }
 ```
+
+### [G-2] Other Gas improvements.
+
+**Description and Mitigation:**
+
+`LevelOne::principal`: initialized once, make it immutable.
+
+`LevelOne::inSession`: initialized once, make it immutable.
+
+`LevelOne::schoolFees`: initialized once, make it immutable.
+
+`LevelOne::usdc`: initialized once, make it immutable.
+
+`LevelOne::reviewCount`: is never initialized, remove it.
+
+`LevelOne::reviewTime`: initialized in declaration and never changed, make it constant.

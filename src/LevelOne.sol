@@ -211,7 +211,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     /////                      /////
     ////////////////////////////////
     // @audit-info - is never used internally - make external
-    // @audit-low - the principal can be teacher too
+    // @audit-info - the principal can be teacher too
     function addTeacher(address _teacher) public onlyPrincipal notYetInSession {
         if (_teacher == address(0)) {
             revert HH__ZeroAddress();
@@ -292,7 +292,7 @@ contract LevelOne is Initializable, UUPSUpgradeable {
 
     // @audit-info - is never used internally - make external
     // @audit-info - not zero address check
-    // @audit-low - dont check if are in session for review
+    // @audit-info - dont check if are in session for review
     function giveReview(address _student, bool review) public onlyTeacher {
         if (!isStudent[_student]) {
             revert HH__StudentDoesNotExist();
