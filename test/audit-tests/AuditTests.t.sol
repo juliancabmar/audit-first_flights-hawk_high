@@ -8,6 +8,8 @@ import {LevelOne} from "../../src/LevelOne.sol";
 import {LevelTwo} from "../../src/LevelTwo.sol";
 import {MockUSDC} from "../mocks/MockUSDC.sol";
 
+import {IERC20Errors} from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
+
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract AuditTests is Test {
@@ -164,7 +166,7 @@ contract AuditTests is Test {
         levelTwoImplementationAddress = address(levelTwoImplementation);
 
         bytes memory data = abi.encodeCall(LevelTwo.graduate, ());
-
+        // Apply the upgrade
         vm.prank(principal);
         levelOneProxy.graduateAndUpgrade(levelTwoImplementationAddress, data);
     }
@@ -187,15 +189,17 @@ contract AuditTests is Test {
 
         // advance the time one week
         vm.warp(block.timestamp + 1 weeks);
-        // review the student, now his score is 90
+        // review the student
         vm.prank(bob);
         levelOneProxy.giveReview(clara, false);
+        // now his score is 90
 
         // advance the time one week
         vm.warp(block.timestamp + 1 weeks);
-        // review the student, now his score is 80
+        // review the student
         vm.prank(bob);
         levelOneProxy.giveReview(clara, false);
+        // now his score is 80
 
         levelTwoImplementation = new LevelTwo();
         levelTwoImplementationAddress = address(levelTwoImplementation);
@@ -225,6 +229,37 @@ contract AuditTests is Test {
         bytes memory data = abi.encodeCall(LevelTwo.graduate, ());
 
         vm.prank(principal);
+        levelOneProxy.graduateAndUpgrade(levelTwoImplementationAddress, data);
+    }
+
+    // @audit-high - Can't add more of two teachers
+    function testCantAddMoreOfTwoTeachers() public {
+        // create a new teacher
+        address julian = makeAddr("julian");
+        // adding three teachers
+        vm.startPrank(principal);
+        levelOneProxy.addTeacher(alice);
+        levelOneProxy.addTeacher(bob);
+        levelOneProxy.addTeacher(julian);
+        vm.stopPrank();
+
+        // adding a student
+        vm.startPrank(clara);
+        usdc.approve(address(levelOneProxy), schoolFees);
+        levelOneProxy.enroll();
+        vm.stopPrank();
+
+        // principal starts session setting 90 for minimun score to pass
+        vm.prank(principal);
+        levelOneProxy.startSession(90);
+
+        levelTwoImplementation = new LevelTwo();
+        levelTwoImplementationAddress = address(levelTwoImplementation);
+
+        bytes memory data = abi.encodeCall(LevelTwo.graduate, ());
+
+        vm.prank(principal);
+        vm.expectRevert();
         levelOneProxy.graduateAndUpgrade(levelTwoImplementationAddress, data);
     }
 }

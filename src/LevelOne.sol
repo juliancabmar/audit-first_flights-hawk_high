@@ -283,7 +283,6 @@ contract LevelOne is Initializable, UUPSUpgradeable {
         emit Expelled(_student);
     }
     // @audit-info - is never used internally - make external
-    // @audit-medium - the cutOffScore can be upper than 100 (enroll score)
 
     function startSession(uint256 _cutOffScore) public onlyPrincipal notYetInSession {
         sessionEnd = block.timestamp + 4 weeks;
@@ -317,10 +316,6 @@ contract LevelOne is Initializable, UUPSUpgradeable {
     }
 
     // @audit-info - is never used internally - make external
-    // @audit-high - not check if session end
-    // @audit-high - not checks if any student has not gotten 4 reviews
-    // @audit-high - not check if any student score not meet the cutOffScore
-    // @audit-high - Can't add more of two teachers
     function graduateAndUpgrade(address _levelTwo, bytes memory) public onlyPrincipal {
         if (_levelTwo == address(0)) {
             revert HH__ZeroAddress();
